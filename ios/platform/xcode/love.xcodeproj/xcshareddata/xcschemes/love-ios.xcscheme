@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "FA0B7F051A95AAF3000E1D17"
-               BuildableName = "DoomTruck.app"
+               BuildableName = "love.app"
                BlueprintName = "love-ios"
                ReferencedContainer = "container:love.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "FA0B7F051A95AAF3000E1D17"
-            BuildableName = "DoomTruck.app"
+            BuildableName = "love.app"
             BlueprintName = "love-ios"
             ReferencedContainer = "container:love.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "FA0B7F051A95AAF3000E1D17"
-            BuildableName = "DoomTruck.app"
+            BuildableName = "love.app"
             BlueprintName = "love-ios"
             ReferencedContainer = "container:love.xcodeproj">
          </BuildableReference>
