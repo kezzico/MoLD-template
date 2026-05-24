@@ -1,7 +1,14 @@
 #!/bin/bash
 # build and run on android
-source env.example
 set -euo pipefail
+
+if [ -f .env ]; then
+  echo "Loading environment variables from .env"
+  source .env
+else
+  echo "No .env file found. You can create one to set Android signing credentials and app ID."
+fi
+
 
 # Create dist directory
 rm -rf dist
@@ -15,13 +22,44 @@ done
 # Copy assets directory
 cp -r assets dist/
 rm -rf android/app/src/embed/assets/*
+mkdir -p android/app/src/embed/assets/
 cp -r dist/ android/app/src/embed/assets/
 pushd android 
 
+# Check for keystore and create one if not found
+if [ ! -f "release.keystore" ]; then
+  echo "Creating keystore..."
+  echo "Keystore not found. Setting up Android signing credentials..."
+  read -p "Enter Android Key Alias (default: key0): " ANDROID_KEY_ALIAS
+  ANDROID_KEY_ALIAS=${ANDROID_KEY_ALIAS:-key0}
 
-# ANDROID_APP_ID=$(grep '^app.application_id=' gradle.properties | cut -d'=' -f2)
-# ANDROID_APP_ID=$(grep '^app.application_id=' gradle.properties | cut -d'=' -f2)
-sed -i '' "s/^app.application_id=.*/app.application_id=$ANDROID_APP_ID/" gradle.properties
+  read -sp "Enter Keystore Password(default: android): " ANDROID_KEYSTORE_PASSWORD
+  echo
+  ANDROID_KEYSTORE_PASSWORD=${ANDROID_KEYSTORE_PASSWORD:-android}
+
+  read -sp "Enter Key Password(default: same as keystore password): " ANDROID_KEY_PASSWORD
+  echo
+  ANDROID_KEY_PASSWORD=${ANDROID_KEY_PASSWORD:-android}
+
+  read -p "Enter Android App ID (default: org.love2d.game): " ANDROID_APP_ID
+  ANDROID_APP_ID=${ANDROID_APP_ID:-org.love2d.game}
+
+  cat >> ../.env << EOF
+  ANDROID_KEY_ALIAS=$ANDROID_KEY_ALIAS
+  ANDROID_KEYSTORE_PASSWORD=$ANDROID_KEYSTORE_PASSWORD
+  ANDROID_KEY_PASSWORD=$ANDROID_KEY_PASSWORD
+  ANDROID_APP_ID=$ANDROID_APP_ID
+EOF
+
+  keytool -genkey -v -keystore release.keystore -keyalg RSA -keysize 2048 -validity 10000 \
+    -alias "$ANDROID_KEY_ALIAS" -storepass "$ANDROID_KEYSTORE_PASSWORD" -keypass "$ANDROID_KEY_PASSWORD" \
+    -dname "CN=Rat Game, O=Game, C=US"
+fi
+
+if [ ! -z "$ANDROID_APP_ID" ]; then
+  echo "Using ANDROID_APP_ID from .env: $ANDROID_APP_ID"
+  sed -i '' "s/^app.application_id=.*/app.application_id=$ANDROID_APP_ID/" gradle.properties
+fi
 
 ./gradlew assembleEmbedNoRecordRelease \
   -Pandroid.injected.signing.store.file="$(pwd)/release.keystore" \
