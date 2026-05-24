@@ -1,4 +1,4 @@
-# Löve2d Mobile Developers Template
+# Löve2d Mobile Template
 
 Build mobile apps and games using the **LÖVE 2D** – a powerful, lightweight Lua-based game engine optimized for rapid 2D graphics rendering and cross-platform mobile development.
 
