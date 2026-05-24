@@ -16,9 +16,9 @@ See [Love2d.org](https://www.love2d.org) for more info.
 
 ### Android
 
-1. Edit **Application Id**, **version number** and **version code** from android/app/gradle.properties.  
+1. Edit **Application Id**, **version number** and **version code** from [android/gradle.properties](/android/gradle.properties).  
 
-2. Edit App icon at android/app/src/main/res/
-    - round icon: android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
-    - square icon: android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+2. Edit App icon at [android/app/src/main/res/](/android/app/src/main/res/)
+    - round icon: [android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml](/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml)
+    - square icon: [android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml](/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml)
 
