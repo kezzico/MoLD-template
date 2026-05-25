@@ -2,6 +2,15 @@
 # build and run on android
 set -euo pipefail
 
+# Prefer JAVA_HOME if already set
+if [ -n "${JAVA_HOME:-}" ]; then
+  export PATH="$JAVA_HOME/bin:$PATH"
+fi
+
+echo "Using Java:"
+which java
+java -version
+
 if [ -f .env ]; then
   echo "Loading environment variables from .env"
   source .env
@@ -9,6 +18,17 @@ else
   echo "No .env file found. You can create one to set Android signing credentials and app ID."
 fi
 
+if [ ! -d "android" ]; then
+  echo "Android directory not found. Cloning from main branch..."
+  git clone --branch main --recurse-submodules https://github.com/love2d/love-android android
+  # git clone https://github.com/love2d/love-android android
+  # pushd android
+  # git fetch --tags
+  # git checkout 12.x
+  git submodule sync --recursive
+  git submodule update --init --force --recursive  
+  # popd
+fi
 
 # Create dist directory
 rm -rf dist
@@ -17,16 +37,18 @@ mkdir -p dist
 # Compile all Lua files with LuaJIT
 for lua_file in *.lua; do
     cp "$lua_file" "dist/$lua_file"  # Copy conf.lua as-is
+    cp -r assets "dist/assets"  # Copy assets directory
+    cp -r app "dist/app"  # Copy app directory
 done
 
 # Copy assets directory
 cp -r assets dist/
 rm -rf android/app/src/embed/assets/*
-mkdir -p android/app/src/embed/assets/
+# mkdir -p android/app/src/embed/assets/
 cp -r dist/ android/app/src/embed/assets/
-pushd android 
 
 # Check for keystore and create one if not found
+pushd android
 if [ ! -f "release.keystore" ]; then
   echo "Creating keystore..."
   echo "Keystore not found. Setting up Android signing credentials..."
@@ -50,6 +72,7 @@ if [ ! -f "release.keystore" ]; then
   ANDROID_KEY_PASSWORD=$ANDROID_KEY_PASSWORD
   ANDROID_APP_ID=$ANDROID_APP_ID
 EOF
+# ^^^ make sure this EOF stays at the start of the line
 
   keytool -genkey -v -keystore release.keystore -keyalg RSA -keysize 2048 -validity 10000 \
     -alias "$ANDROID_KEY_ALIAS" -storepass "$ANDROID_KEYSTORE_PASSWORD" -keypass "$ANDROID_KEY_PASSWORD" \

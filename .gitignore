@@ -1,4 +1,8 @@
 .DS_Store
 *.love
 Thumbs.db
+.envandroid
+android/
+ios/
 .env
+dist/
